@@ -1,7 +1,37 @@
 file(GLOB SOURCES *.cpp)
 list(REMOVE_ITEM SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
 
+### depends on pcap++
+if(PCAPPP_LIB_DIR)
+    message(STATUS "Defined pcap++ lib dir")
+else()
+    set(PCAPPP_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../PcapPlusPlus/Dist")
+    message(STATUS "Default pcap++ lib dir")
+endif()
+if(EXISTS ${PCAPPP_LIB_DIR})
+    message(STATUS "pcap++ lib dir: ${PCAPP_LIB_DIR}")
+else()
+    message(FATAL_ERROR "Not found pcap++ lib dir: ${PCAPP_LIB_DIR}")
+endif()
+if(PCAPPP_INC_DIR)
+    message(STATUS "Defined pcap++ inc dir")
+else()
+    set(PCAPPP_INC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../PcapPlusPlus/Dist/header")
+    message(STATUS "Default pcap++ inc dir")
+endif()
+if(EXISTS ${PCAPPP_INC_DIR})
+    message(STATUS "pcap++ inc dir: ${PCAPPP_INC_DIR}")
+else()
+    message(FATAL_ERROR "Not found pcap++ inc dir: ${PCAPPP_INC_DIR}")
+endif()
+
+### make it easier future tests/integration
+include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${PCAPPP_INC_DIR})
 set(OBJECT_LIB "${CMAKE_PROJECT_NAME}_object")
 add_library(${OBJECT_LIB} OBJECT ${SOURCES})
+
+### the binary itself
+link_directories(${PCAPPP_LIB_DIR})
 add_executable(${CMAKE_PROJECT_NAME} main.cpp $<TARGET_OBJECTS:${OBJECT_LIB}>)
 add_dependencies(${CMAKE_PROJECT_NAME} ${OBJECT_LIB})
+target_link_libraries(${CMAKE_PROJECT_NAME} Common++  Packet++  Pcap++)
