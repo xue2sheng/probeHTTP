@@ -1,0 +1,7 @@
+file(GLOB SOURCES *.cpp)
+list(REMOVE_ITEM SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
+
+set(OBJECT_LIB "${CMAKE_PROJECT_NAME}_object")
+add_library(${OBJECT_LIB} OBJECT ${SOURCES})
+add_executable(${CMAKE_PROJECT_NAME} main.cpp $<TARGET_OBJECTS:${OBJECT_LIB}>)
+add_dependencies(${CMAKE_PROJECT_NAME} ${OBJECT_LIB})
